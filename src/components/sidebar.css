@@ -31,6 +31,8 @@
 
 .sidebar-closed{
     width: 20px;
+    width: fit-content;
+    box-shadow: 2px 0px 2px 2px #D3D3D3;
 }
 
 .sidebar-expanded{
@@ -47,9 +49,6 @@
     cursor: pointer;
     align-items: flex-start;
 
-    :hover{
-        background-color: brown;
-    }
 
     .left-icon{
         /* background-color: inherit; */
@@ -58,6 +57,11 @@
     .label{
         /* background-color: inherit; */
         margin-left: 8px;
-        font-size: 14px;
+        font-size: 12px;
+        font-weight: 700;
     }
+}
+
+.single-option:hover{
+    background-color: rgb(228, 235, 232);
 }
