@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import "../components/sidebar.css";
-import Home from '../assets/images/home.png'
-import Notebook from '../assets/images/notebook_fill.svg'
-import UserIcon from '../assets/images/user.png'
+import "./sidebar.scss";
+import Icon from "../common/Icon/Icon";
 const SideNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -33,7 +31,7 @@ const SideNavbar = () => {
       <div className="sidebar-container">
          <div className="header">
              <div>
-            <img width="18" height="18" src={Home} alt="add--v1"/>
+            <Icon icon='home'/>
             </div>
             {isHovered && <div className="label">
                 Vijay Traders
@@ -42,7 +40,7 @@ const SideNavbar = () => {
          <div className="link-wrapper">
           <div className="single-option">
             <div className="left-icon">
-            <img width="18" height="18" src={Notebook} alt="add--v1"/>
+            <Icon icon='notebook'/>
             </div>
             {isHovered && <div className="label">
                 Add Button
@@ -50,7 +48,7 @@ const SideNavbar = () => {
           </div>
           <div className="single-option">
             <div className="left-icon">
-            <img width="18" height="18" className="image-color" src={UserIcon} alt="add--v1"/>
+            <Icon icon='user'/>
             </div>
             {isHovered && <div className="label">
                 Add Button
