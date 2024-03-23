@@ -1,0 +1,13 @@
+@import '../../../scss/base.scss';
+
+.iconclass{
+    svg{
+        width:20px;
+        height: 20px;
+
+        path,circle{
+            fill: $primary-color;
+            opacity: 1;
+        }
+    }
+}
