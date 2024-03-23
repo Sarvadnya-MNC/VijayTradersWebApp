@@ -1,0 +1,26 @@
+
+@import './base';
+@import './form';
+@import "react-datepicker/dist/react-datepicker.css";
+
+
+body{
+    font-family: "Montserrat", sans-serif;
+}
+
+.dpicker-border{
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    display: grid;
+    padding: 4px;
+}
+
+.dpicker-wrapper{
+    display: block;
+    .react-datepicker__input-container{
+        display: grid;
+        input{
+            &:focus { outline: none; border-color: #6c757d; }
+        }
+    }
+}
