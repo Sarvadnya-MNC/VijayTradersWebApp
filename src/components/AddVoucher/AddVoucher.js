@@ -75,7 +75,6 @@ function AddVoucher(props) {
   }, []);
 
   const onChangeInput = (key, value) => {
-    console.log("changing input", { key, value });
     setVoucherForm((prevState) => ({ ...prevState, [key]: value }));
   };
 
@@ -86,7 +85,6 @@ function AddVoucher(props) {
       transaction_type: voucherForm.transaction_type?.value,
       user_id: voucherForm.user_id?.value,
     };
-    console.log("formdata", voucherForm);
     window.alert(JSON.stringify(dataToPut));
     // create the record
     const docRef = await addDoc(collection(db, "vijay_transaction"), dataToPut);
@@ -106,7 +104,6 @@ function AddVoucher(props) {
       // if it is debit
       baseAmount -= Number(dataToPut.amount);
     }
-    console.log("baseamount", baseAmount);
     // get the doc for selected user from db
     const userDoc = doc(db, "vijay_user", userData?.id);
     // update user balance
