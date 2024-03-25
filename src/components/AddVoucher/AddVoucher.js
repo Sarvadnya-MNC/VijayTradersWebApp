@@ -65,7 +65,7 @@ function AddVoucher(props) {
       usersArray[0] && {
         label: `${usersArray[0].last_name} ${usersArray[0].first_name} ${usersArray[0].middle_name}`,
         value: `${usersArray[0].user_id}`,
-      },
+      }
     );
   }, []);
 
@@ -74,17 +74,19 @@ function AddVoucher(props) {
     getAllUsersData();
   }, []);
 
-  const onChangeInput = useCallback((key, value) => {
+  const onChangeInput = (key, value) => {
+    console.log("changing input", { key, value });
     setVoucherForm((prevState) => ({ ...prevState, [key]: value }));
-  }, []);
+  };
 
-  const onFormSubmit = useCallback(async () => {
+  const onFormSubmit = async () => {
     // refine selects and make proper datas
     const dataToPut = {
       ...voucherForm,
       transaction_type: voucherForm.transaction_type?.value,
       user_id: voucherForm.user_id?.value,
     };
+    console.log("formdata", voucherForm);
     window.alert(JSON.stringify(dataToPut));
     // create the record
     const docRef = await addDoc(collection(db, "vijay_transaction"), dataToPut);
@@ -92,7 +94,7 @@ function AddVoucher(props) {
     await updateDoc(docRef, { transaction_id: docRef.id });
     // user doc from userslist
     let userData = usersList.filter(
-      (user) => user.user_id == dataToPut.user_id,
+      (user) => user.user_id == dataToPut.user_id
     )[0];
     // current amount in db
     let baseAmount = Number(userData?.closing_balance);
@@ -109,7 +111,7 @@ function AddVoucher(props) {
     const userDoc = doc(db, "vijay_user", userData?.id);
     // update user balance
     await updateDoc(userDoc, { closing_balance: baseAmount.toString() });
-  }, []);
+  };
 
   return (
     <Dialog
