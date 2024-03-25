@@ -1,0 +1,7 @@
+.credit-gardient{
+    background-image: linear-gradient(to right bottom, #002a69, #303371, #4a3d79, #614880, #765488);
+}
+
+.debit-gradient{
+    background-image: linear-gradient(to right bottom, #ff0000, #ea0000, #d50000, #c10000, #ad0000);
+}
