@@ -9,6 +9,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabPanel from "@mui/lab/TabPanel";
 import TabList from "@mui/lab/TabList";
 import Dashboard from "../Dashboard/Dashboard";
+import Transaction from "../Transactions/Transaction";
 const CentralTabsPanel = () => {
   const [value, setValue] = React.useState("0");
 
@@ -34,7 +35,7 @@ const CentralTabsPanel = () => {
             aria-label="basic tabs example"
           >
             <Tab label="Dashboard" value="0" />
-            <Tab label="Item Two" value="1" />
+            <Tab label="Unsettled accounts" value="1" />
             <Tab label="Item Three" value="2" />
           </TabList>
         </Box>
@@ -42,7 +43,7 @@ const CentralTabsPanel = () => {
           <Dashboard />
         </TabPanel>
         <TabPanel sx={{ p: "10px" }} value="1">
-          Item Two
+          <Transaction />
         </TabPanel>
         <TabPanel sx={{ p: "10px" }} value="2">
           Item Three

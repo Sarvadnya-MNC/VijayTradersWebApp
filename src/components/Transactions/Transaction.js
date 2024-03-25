@@ -72,7 +72,7 @@ const Transaction = () => {
 
 
     return (
-        <div style={{ margin: '10%', marginTop: '5%' }} >
+        <div >
             <GridComponent dataSource={transactionData}
                 id='Grid'
                 ref = {g => grid = g}
