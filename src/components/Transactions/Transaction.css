@@ -1,0 +1,6 @@
+@import url('https://cdn.syncfusion.com/ej2/material.css');
+
+.e-headercelldiv {
+    font-weight: 600 !important;
+    color: #333;
+  }
