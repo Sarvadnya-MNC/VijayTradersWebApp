@@ -3,20 +3,28 @@ import { GridComponent, ColumnsDirective, ColumnDirective, Page, Sort, Filter, T
 import { IconButton } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import './Transaction.css';
+import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
 import { db } from "../../database-config";
 import {
     collection,
     getDocs,
     Timestamp
 } from "@firebase/firestore";
+import TransactionDetails from "../TransactionDetails";
+
 
 const Transaction = () => {
     const [transactionData, setTransactionData] = useState([]);
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedTransaction, setSelectedTransaction] = useState('');
 
     useEffect(() => {
         getAllTransactionsData();
     }, []);
+
+    useEffect(() => {
+        console.log('Selected Transaction:', selectedTransaction);
+    }, [selectedTransaction]);
+    
 
     const getAllTransactionsData = async () => {
         const userCollectionRef = collection(db, 'vijay_user');
@@ -47,6 +55,7 @@ const Transaction = () => {
                 'तारीख': new Timestamp(user.updated_date.seconds, user.updated_date.nanoseconds).toDate(),
                 'रक्कम': Math.abs(user.closing_balance),
                 'व्यवहाराचा प्रकार': user.closing_balance > 0 ? "CREDITE/जमा" : "DEBITE/नावे",
+                'user_id': user.user_id
             };            
             
         }).filter(record => record !== null);;
@@ -55,22 +64,34 @@ const Transaction = () => {
     }
 
     const actionTemplate = (props) => {
+        const handleClick = () => {
+            console.log('in props.user_id', props.user_id);
+            console.log('Row data:', props);
+            setSelectedTransaction(props.user_id);
+            console.log('Selected Transaction:', selectedTransaction);
+        };
+
         return (
             <div style={{ textAlign: 'left' }}>
-            <IconButton aria-label="visibility">
-              <VisibilityIcon />
-            </IconButton>
-          </div>
-          );
+                <IconButton aria-label="visibility" onClick={handleClick}>
+                    <VisibilityIcon />
+                </IconButton>
+            </div>
+        );
       };
       let grid ;
     const toolbarClick = (args) =>{
         if (grid && args.item.id === 'Grid_pdfexport') {
             grid.pdfExport();
           }
+          console.log('In Refresh');
+          if (grid && args.item.id === 'Grid_refresh') { // Check if the clicked item is the Refresh button
+            getAllTransactionsData(); // Call your method to fetch data
+            console.log('In Refresh');
+        }
+         
     }
-
-
+    
     return (
         <div >
             <GridComponent dataSource={transactionData}
@@ -82,7 +103,7 @@ const Transaction = () => {
                 allowPaging={true}
                 pageSettings={{ pageSize: 15 }}
                 allowPdfExport = {true}
-                toolbar = {['PdfExport']}
+                toolbar={['PdfExport', 'Refresh']}
                 toolbarClick = {toolbarClick}
                 >
                 <ColumnsDirective>
@@ -92,10 +113,15 @@ const Transaction = () => {
                     <ColumnDirective field='तारीख' headerText='तारीख' width='150' format='dd/MM/yyyy' type="date" />
                     <ColumnDirective field='रक्कम' headerText='रक्कम' width='120' textAlign='Center' format='0.00'/>
                     <ColumnDirective field='व्यवहाराचा प्रकार' headerText='व्यवहाराचा प्रकार' width='180' />
-                    <ColumnDirective headerText='' width='50' template={actionTemplate} />
+                    <ColumnDirective headerText='' width='50' template={(props) => actionTemplate(props)} />
                 </ColumnsDirective>
                 <Inject services={[Filter,Sort,Page,Toolbar,PdfExport]}></Inject>
-            </GridComponent>    
+
+            </GridComponent>  
+
+             {selectedTransaction && (
+                <TransactionDetails transactionId={selectedTransaction} />
+            )}  
         </div>
     );
 };
