@@ -1,0 +1,27 @@
+@import url('https://cdn.syncfusion.com/ej2/material.css');
+
+.e-grid .e-headercell {
+    color: #ffffff;
+    background-color: #dbe4e6;
+}
+
+.debit-cell {
+    color: red; /* Apply red color to debit cell */
+}
+
+.credit-cell {
+    color: green; /* Apply green color to credit cell */
+}
+
+.make-bold {
+    font-weight: bold;
+}
+
+.custom-grid .e-gridheader .e-columnheader {
+    border-right: 1px solid #ccc;
+}
+
+.custom-grid .e-gridcontent .e-row .e-rowcell {
+    border-right: 1px solid #ccc;
+}
+
