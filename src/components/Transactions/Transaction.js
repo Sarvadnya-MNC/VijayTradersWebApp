@@ -10,7 +10,7 @@ import {
     getDocs,
     Timestamp
 } from "@firebase/firestore";
-import TransactionDetails from "../TransactionDetails";
+import Transactiondetails from "../TransactionDetails";
 
 
 const Transaction = () => {
@@ -20,10 +20,6 @@ const Transaction = () => {
     useEffect(() => {
         getAllTransactionsData();
     }, []);
-
-    useEffect(() => {
-        console.log('Selected Transaction:', selectedTransaction);
-    }, [selectedTransaction]);
     
 
     const getAllTransactionsData = async () => {
@@ -120,7 +116,7 @@ const Transaction = () => {
             </GridComponent>  
 
              {selectedTransaction && (
-                <TransactionDetails transactionId={selectedTransaction} />
+                <Transactiondetails transactionId={selectedTransaction} />
             )}  
         </div>
     );
