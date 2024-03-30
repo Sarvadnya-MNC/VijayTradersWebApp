@@ -7,13 +7,22 @@ import AddVoucher from "./components/AddVoucher/AddVoucher";
 import Transaction from "./components/Transactions/Transaction";
 import { registerLicense } from '@syncfusion/ej2-base';
 import Home from "./components/Home/Home";
+import { Route, Routes  } from "react-router-dom";
+import ProtectedRoute from "./helpers/ProtectedRoute";
+import Login from "./components/Login/Login";
+import AuthProvider from "./helpers/AuthProvider";
 
 function App() {
   registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWXxcdXVUR2BfWUxyWEM=');
   return (
-    <div className="App">
-      <Home />
-    </div>
+    <>
+    <AuthProvider>
+    <Routes>
+        <Route path="/" element={ <ProtectedRoute><Home/></ProtectedRoute> } />
+        <Route path="login" element={ <Login /> } />
+      </Routes>
+      </AuthProvider>
+    </>
   );
 }
 
