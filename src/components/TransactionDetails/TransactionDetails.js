@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import MainNavbar from '../MainNavbar/MainNavbar';
 import { Card, Box } from "@mui/material";
-import { GridComponent, ColumnsDirective, ColumnDirective,Sort,Inject } from "@syncfusion/ej2-react-grids";
+import { GridComponent, ColumnsDirective, ColumnDirective,Sort,Inject,Edit,CommandColumn } from "@syncfusion/ej2-react-grids";
 import { db } from "../../database-config";
 import {
     collection,
@@ -109,6 +109,7 @@ const TransactionDetails = () => {
                 </Card>
             </Box>
             <GridComponent dataSource={transaction}
+            id='Grid'
             allowSorting={true}
             queryCellInfo={queryCellInfoHandler}
             cssClass="custom-grid">
@@ -119,9 +120,10 @@ const TransactionDetails = () => {
                     <ColumnDirective field='Date' headerText='दिनांक' width='150' format='dd/MM/yyyy' type="date"/>
                     <ColumnDirective field='Debited' headerText='नावे' width='150' template={debitedTemplate}/>
                     <ColumnDirective field='Credited' headerText='जमा' width='120' format='0.00' template={creditedTemplate}/>
+                    <ColumnDirective headerText='Edit' width='100' commands={[{ type: 'edit', buttonOption: { iconCss: 'e-icons e-edit e-icon-space', cssClass: 'e-flat' } }]} />
                 </ColumnsDirective>
 
-                <Inject services={[Sort]}></Inject>
+                <Inject services={[Sort, Edit, CommandColumn]}></Inject>
             </GridComponent>
         </div>
     );
