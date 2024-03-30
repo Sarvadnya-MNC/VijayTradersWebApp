@@ -14,7 +14,12 @@ import { axisClasses } from "@mui/x-charts";
 import "./dashboard.css";
 import AddVoucher from "../AddVoucher/AddVoucher";
 import AddUser from "../AddUser/AddUser";
-import { collection, getDocs, Timestamp } from "@firebase/firestore";
+import {
+  collection,
+  getDocs,
+  Timestamp,
+  onSnapshot,
+} from "@firebase/firestore";
 import { db } from "../../database-config";
 
 const Dashboard = () => {
@@ -47,16 +52,8 @@ const Dashboard = () => {
     setIsAddUserOpen(false);
   };
 
-  const getAllTransactions = useCallback(async () => {
-    const dataArray = [];
-    await getDocs(collection(db, "vijay_transaction")).then((d) => {
-      d.docs.map((s) => {
-        // adding in base array
-        dataArray.push({ ...s.data(), id: s.id });
-      });
-    });
-
-    const dateMap = dataArray
+  const setGraphData = (baseArray) => {
+    const dateMap = baseArray
       .map((i) => ({
         ...i,
         date: new Timestamp(i.date.seconds, i.date.nanoseconds).toDate(),
@@ -82,6 +79,7 @@ const Dashboard = () => {
             ...resMap[date],
             credit: Number(obj.amount),
             debit: 0,
+            date: obj.date,
             day: obj.date.toLocaleDateString("en", {
               month: "short",
               day: "numeric",
@@ -92,6 +90,7 @@ const Dashboard = () => {
             ...resMap[date],
             debit: Number(obj.amount),
             credit: 0,
+            date: obj.date,
             day: obj.date.toLocaleDateString("en", {
               month: "short",
               day: "numeric",
@@ -101,34 +100,57 @@ const Dashboard = () => {
 
         return resMap;
       }, {});
+    // set the graph data
+    setDatasets(Object.values(dateMap).sort((a1, a2) => a1.date - a2.date));
+  };
 
-    // set the data for graph
-    setDatasets(Object.values(dateMap));
-
-    const dataArray2 = [];
-    await getDocs(collection(db, "vijay_user")).then((d) => {
-      d.docs.map((s) => {
-        // adding in base array
-        dataArray2.push({ ...s.data(), id: s.id });
-      });
-    });
-
+  const setAmountsData = (usersArray) => {
     // setting total for cedit and debit
     setTotalAmounts({
-      credit: dataArray2
+      credit: usersArray
         .filter((si) => Number(si.closing_balance) >= 0)
         .map((a) => a.closing_balance)
         .reduce((currSum, ele) => Number(currSum) + Number(ele)),
-      debit: dataArray2
+      debit: usersArray
         .filter((si) => Number(si.closing_balance) < 0)
         .map((a) => Math.abs(Number(a.closing_balance)))
         .reduce((currSum, ele) => currSum + ele),
     });
-  }, []);
+  };
 
   useEffect(() => {
+    const unsubscribeTransactions = onSnapshot(
+      collection(db, "vijay_transaction"),
+      (snapshot) => {
+        // Respond to data
+        // ...
+        const baseArray = [];
+        snapshot.docs.map((doc) =>
+          baseArray.push({ ...doc.data(), id: doc.id })
+        );
+        // set the data
+        setGraphData(baseArray);
+      }
+    );
+
+    const unsubscribeUsers = onSnapshot(
+      collection(db, "vijay_user"),
+      (snapshot) => {
+        // Respond to data
+        // ...
+        const baseArray2 = [];
+        snapshot.docs.map((doc) =>
+          baseArray2.push({ ...doc.data(), id: doc.id })
+        );
+        // set the data
+        setAmountsData(baseArray2);
+      }
+    );
     // get all data for dashboard
-    getAllTransactions();
+    return () => {
+      unsubscribeTransactions();
+      unsubscribeUsers();
+    };
   }, []);
 
   const chartSetting = {
@@ -339,7 +361,7 @@ const Dashboard = () => {
               </Card>
             </Grid>
             <Grid item xs={4}>
-              <Card sx={{ minWidth: 345, height: 60 + "vh" }}>
+              <Card sx={{ minWidth: 200, height: 60 + "vh" }}>
                 <CardContent></CardContent>
               </Card>
             </Grid>
