@@ -8,6 +8,7 @@ import {
   getDocs,
   addDoc,
   updateDoc,
+  setDoc,
   doc,
 } from "@firebase/firestore";
 import Dialog from "@mui/material/Dialog";
@@ -16,6 +17,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  updateCurrentUser,
+  getAuth,
+} from "firebase/auth";
+import { auth } from "../../database-config";
 import * as yup from "yup";
 
 function AddUser(props) {
@@ -63,10 +71,31 @@ function AddUser(props) {
   };
 
   const onFormSubmit = async () => {
-    // create the record
-    const docRef = await addDoc(UsersCollectionRef, userDetailsForm);
-    // update the record with unique id
-    await updateDoc(docRef, { user_id: docRef.id });
+    const current = getAuth().currentUser;
+    // create the user
+    await createUserWithEmailAndPassword(auth, userDetailsForm.email, "123456")
+      .then(async (userCredential) => {
+        //Users Data
+        const user = userCredential.user;
+        // add a doc with user id as custom id
+        await setDoc(doc(db, "vijay_user", user.uid), {
+          ...userDetailsForm,
+          user_id: user.uid,
+        });
+
+        updateProfile(userCredential.user, {
+          displayName: `${userDetailsForm.first_name} ${userDetailsForm.last_name}`,
+        });
+
+        // resettinh the original user
+        await updateCurrentUser(auth, current);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        // ..
+      });
   };
 
   return (
