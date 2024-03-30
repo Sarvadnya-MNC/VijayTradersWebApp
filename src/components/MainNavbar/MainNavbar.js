@@ -14,11 +14,15 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Stack from "@mui/material/Stack";
+import { AuthContext } from "../../helpers/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const MainNavbar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+  // Access the user, logOut, and loading state from the AuthContext
+  const { user, logOut } = React.useContext(AuthContext);
+  const navigate = useNavigate();
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -31,6 +35,12 @@ const MainNavbar = () => {
   };
 
   const handleCloseUserMenu = () => {
+    logOut()
+      .then(() => {
+        console.log("User logged out successfully");
+        navigate("/login"); // Redirect to the login page after logout
+      })
+      .catch((error) => console.error(error));
     setAnchorElUser(null);
   };
 
@@ -101,6 +111,7 @@ const MainNavbar = () => {
             </div>
           </Stack>
           <Box sx={{ flexGrow: 0 }}>
+            <span style={{ marginRight: "8px" }}>{user?.displayName}</span>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp">
@@ -122,7 +133,7 @@ const MainNavbar = () => {
                 horizontal: "right",
               }}
               open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
+              onClose={() => setAnchorElUser(null)}
             >
               {["Logout"].map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
