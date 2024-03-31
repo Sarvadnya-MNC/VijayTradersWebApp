@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import MainNavbar from '../MainNavbar/MainNavbar';
 import { Card, Box } from "@mui/material";
-import { GridComponent, ColumnsDirective, ColumnDirective,Sort,Inject,Edit,CommandColumn } from "@syncfusion/ej2-react-grids";
+import { GridComponent, ColumnsDirective, ColumnDirective,Sort,Inject,Edit,CommandColumn,Toolbar } from "@syncfusion/ej2-react-grids";
 import { db } from "../../database-config";
 import {
     collection,
@@ -11,7 +11,9 @@ import {
     doc,
     query,
     where,
-    Timestamp
+    Timestamp,
+    updateDoc,
+    deleteDoc,
 } from "@firebase/firestore";
 import './TransactionDetails.css'
 
@@ -45,15 +47,14 @@ const TransactionDetails = () => {
                 'Date': new Timestamp(doc.data().date.seconds, doc.data().date.nanoseconds).toDate(),
                 'Debited': doc.data().transaction_type === 'DEBITE/नावे' ? doc.data().amount : '',
                 'Credited': doc.data().transaction_type === 'CREDITE/जमा' ? doc.data().amount : '',
-                id: doc.id
+                id: doc.id,
+                amount : doc.data().amount
             };
         });
 
-        // Calculate total debited and credited
         const totalDebited = transactions.reduce((acc, curr) => acc + parseFloat(curr.Debited || 0), 0);
         const totalCredited = transactions.reduce((acc, curr) => acc + parseFloat(curr.Credited || 0), 0);
 
-        // Add total row
         const totalRow = {
             'S/r': '',
             'Remark': 'Total',
@@ -62,7 +63,6 @@ const TransactionDetails = () => {
             'Credited': totalCredited
         };
 
-        // Set transactions including total row
         setTransaction([...transactions, totalRow]);
 
     }    
@@ -80,6 +80,36 @@ const TransactionDetails = () => {
         if (args.data['S/r'] === '') {
             args.cell.classList.add('make-bold');
         }
+    };
+
+    const handleActionComplete = async (args) => {
+        console.log('In update outside', args);
+        if (args.requestType === 'save') {
+            console.log('In update inside');
+            await updateDocumentInFirebase(args.data);
+        }
+    };
+    
+    const handleActionBegin = async (args) => {
+        console.log('In delete outside',args);
+        if (args.requestType === 'delete') {
+            console.log('In delete inside');
+            await deleteDocumentFromFirebase(args.data[0].id);
+        }
+    };
+    
+    const updateDocumentInFirebase = async (updatedData) => {
+        const docRef = doc(db, "vijay_transaction", updatedData.id);
+        let data = {
+            amount : updatedData.amount,
+            date :updatedData.Date ,
+            remark :  updatedData.Remark           
+        };
+        await updateDoc(docRef, data);
+    };
+    
+    const deleteDocumentFromFirebase = async (documentId) => {
+        await deleteDoc(doc(db, "vijay_transaction", documentId));
     };
 
     return (
@@ -111,19 +141,22 @@ const TransactionDetails = () => {
             <GridComponent dataSource={transaction}
             id='Grid'
             allowSorting={true}
+            toolbar={['Add', 'Edit', 'Delete', 'Update', 'Cancel']}
+            editSettings = { {allowEditing: true, allowAdding: true, allowDeleting: true }}
             queryCellInfo={queryCellInfoHandler}
-            cssClass="custom-grid">
+            cssClass="custom-grid"
+            actionComplete={handleActionComplete}
+            actionBegin={handleActionBegin}>
 
             <ColumnsDirective>
-                    <ColumnDirective field='S/r' headerText='क्रमांक' width='150' textAlign='Center'/>
+                    <ColumnDirective field='S/r' headerText='क्रमांक' width='150' textAlign='Center' isPrimaryKey ={true} />
                     <ColumnDirective field='Remark' headerText='तपशील' width='200' />
                     <ColumnDirective field='Date' headerText='दिनांक' width='150' format='dd/MM/yyyy' type="date"/>
                     <ColumnDirective field='Debited' headerText='नावे' width='150' template={debitedTemplate}/>
                     <ColumnDirective field='Credited' headerText='जमा' width='120' format='0.00' template={creditedTemplate}/>
-                    <ColumnDirective headerText='Edit' width='100' commands={[{ type: 'edit', buttonOption: { iconCss: 'e-icons e-edit e-icon-space', cssClass: 'e-flat' } }]} />
                 </ColumnsDirective>
 
-                <Inject services={[Sort, Edit, CommandColumn]}></Inject>
+                <Inject services={[Sort, Edit, CommandColumn, Toolbar]}></Inject>
             </GridComponent>
         </div>
     );
