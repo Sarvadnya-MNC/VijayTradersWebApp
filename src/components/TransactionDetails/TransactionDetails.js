@@ -23,6 +23,8 @@ const TransactionDetails = () => {
     const location = useLocation();
     console.log('Location state', location);
     const userId = location?.state?.userID;
+    var allowCreditEdit = false;
+    var allowDebitEdit = false;
     
 
     useEffect(() => {         
@@ -68,10 +70,16 @@ const TransactionDetails = () => {
     }    
 
     const debitedTemplate = (props) => {
+        allowDebitEdit = props.Debited > 0 ? true : false;
+        console.log( 'props.Debited allowDebitEdit=  ',allowDebitEdit);
+        console.log( 'props.Debited value=  ',props.Debited);
         return <div style={{ color: props.Debited > 0 ? 'red' : 'inherit' }}>{props.Debited}</div>;
     };
 
     const creditedTemplate = (props) => {
+        allowCreditEdit = props.Credited > 0 ? true : false;
+        console.log( 'props.Credit allowDebitEdit=  ',allowCreditEdit);
+        console.log( 'props.credit value=  ',props.Credited);
         return <div style={{ color: props.Credited > 0 ? 'green' : 'inherit' }}>{props.Credited}</div>;
     };
 
@@ -101,7 +109,7 @@ const TransactionDetails = () => {
     const updateDocumentInFirebase = async (updatedData) => {
         const docRef = doc(db, "vijay_transaction", updatedData.id);
         let data = {
-            amount : updatedData.amount,
+            amount : updatedData.Credited > 0 ? updatedData.Credited: updatedData.Debited,
             date :updatedData.Date ,
             remark :  updatedData.Remark           
         };
@@ -111,6 +119,7 @@ const TransactionDetails = () => {
     const deleteDocumentFromFirebase = async (documentId) => {
         await deleteDoc(doc(db, "vijay_transaction", documentId));
     };
+
 
     return (
         <div>
@@ -152,8 +161,8 @@ const TransactionDetails = () => {
                     <ColumnDirective field='S/r' headerText='क्रमांक' width='150' textAlign='Center' isPrimaryKey ={true} />
                     <ColumnDirective field='Remark' headerText='तपशील' width='200' />
                     <ColumnDirective field='Date' headerText='दिनांक' width='150' format='dd/MM/yyyy' type="date"/>
-                    <ColumnDirective field='Debited' headerText='नावे' width='150' template={debitedTemplate}/>
-                    <ColumnDirective field='Credited' headerText='जमा' width='120' format='0.00' template={creditedTemplate}/>
+                    <ColumnDirective field='Debited' headerText='नावे' width='150' template={debitedTemplate} allowEditing={allowDebitEdit}/>
+                    <ColumnDirective field='Credited' headerText='जमा' width='120' format='0.00' template={creditedTemplate} allowEditing={allowCreditEdit}/>
                 </ColumnsDirective>
 
                 <Inject services={[Sort, Edit, CommandColumn, Toolbar]}></Inject>
