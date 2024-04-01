@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Sort, Filter, Toolbar, Inject, PdfExport, toolbarClick } from "@syncfusion/ej2-react-grids";
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Sort, Filter, Toolbar, Inject, PdfExport } from "@syncfusion/ej2-react-grids";
 import { IconButton } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import './Transaction.css';
@@ -9,14 +9,18 @@ import {
     getDocs,
     Timestamp
 } from "@firebase/firestore";
+import { useNavigate } from "react-router-dom";
+
 
 const Transaction = () => {
     const [transactionData, setTransactionData] = useState([]);
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedTransaction, setSelectedTransaction] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         getAllTransactionsData();
     }, []);
+    
 
     const getAllTransactionsData = async () => {
         const userCollectionRef = collection(db, 'vijay_user');
@@ -42,35 +46,51 @@ const Transaction = () => {
             const currentIndex = validIndex++;
             return {
                 'S/R No': currentIndex + 1,
-                'नाव': fullName,
-                'मोबाइल': user.mobile,
-                'तारीख': new Timestamp(user.updated_date.seconds, user.updated_date.nanoseconds).toDate(),
-                'रक्कम': Math.abs(user.closing_balance),
-                'व्यवहाराचा प्रकार': user.closing_balance > 0 ? "CREDITE/जमा" : "DEBITE/नावे",
+                'Name': fullName,
+                'Mobile': user.mobile,
+                'Date': new Timestamp(user.updated_date.seconds, user.updated_date.nanoseconds).toDate(),
+                'Amount': Math.abs(user.closing_balance),
+                'TransactionType': user.closing_balance > 0 ? "CREDITE/जमा" : "DEBITE/नावे",
+                'user_id': user.user_id,
+                'Address' : user.address,
+                'email' : user.email,
             };            
             
-        }).filter(record => record !== null);;
+        }).filter(record => record !== null);
 
         setTransactionData(data);
     }
 
-    const actionTemplate = (props) => {
+    const handleClick = (values) => {
+        console.log('in props.user_id', values.user_id);
+        console.log('Row data:', values);
+        setSelectedTransaction(values.user_id);
+        navigate("/transaction-records", {state: {userID:values.user_id}} );
+    };
+
+    const actionTemplate = (props) => {       
+
         return (
             <div style={{ textAlign: 'left' }}>
-            <IconButton aria-label="visibility">
-              <VisibilityIcon />
-            </IconButton>
-          </div>
-          );
+                <IconButton aria-label="visibility" onClick={() => handleClick(props)}>
+                    <VisibilityIcon />
+                </IconButton>
+            </div>
+        );
       };
       let grid ;
     const toolbarClick = (args) =>{
         if (grid && args.item.id === 'Grid_pdfexport') {
             grid.pdfExport();
           }
+          console.log('In Refresh');
+          if (grid && args.item.id === 'Grid_refresh') { // Check if the clicked item is the Refresh button
+            getAllTransactionsData(); // Call your method to fetch data
+            console.log('In Refresh');
+        }
+         
     }
-
-
+    
     return (
         <div >
             <GridComponent dataSource={transactionData}
@@ -82,20 +102,21 @@ const Transaction = () => {
                 allowPaging={true}
                 pageSettings={{ pageSize: 15 }}
                 allowPdfExport = {true}
-                toolbar = {['PdfExport']}
+                toolbar={['PdfExport', 'Refresh']}
                 toolbarClick = {toolbarClick}
                 >
                 <ColumnsDirective>
                     <ColumnDirective field='S/R No' headerText='क्रमांक' width='150' textAlign='Center'/>
-                    <ColumnDirective field='नाव' headerText='नाव' width='200' />
-                    <ColumnDirective field='मोबाइल' headerText='मोबाइल' width='150' />
-                    <ColumnDirective field='तारीख' headerText='तारीख' width='150' format='dd/MM/yyyy' type="date" />
-                    <ColumnDirective field='रक्कम' headerText='रक्कम' width='120' textAlign='Center' format='0.00'/>
-                    <ColumnDirective field='व्यवहाराचा प्रकार' headerText='व्यवहाराचा प्रकार' width='180' />
-                    <ColumnDirective headerText='' width='50' template={actionTemplate} />
+                    <ColumnDirective field='Name' headerText='नाव' width='200' />
+                    <ColumnDirective field='Mobile' headerText='मोबाइल' width='150' />
+                    <ColumnDirective field='Date' headerText='दिनांक' width='150' format='dd/MM/yyyy' type="date" />
+                    <ColumnDirective field='Amount' headerText='रक्कम' width='120' textAlign='Center' format='0.00'/>
+                    <ColumnDirective field='TransactionType' headerText='व्यवहाराचा प्रकार' width='180' />
+                    <ColumnDirective headerText='' width='50' template={(props) => actionTemplate(props)} />
                 </ColumnsDirective>
                 <Inject services={[Filter,Sort,Page,Toolbar,PdfExport]}></Inject>
-            </GridComponent>    
+
+            </GridComponent>   
         </div>
     );
 };

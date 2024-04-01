@@ -11,6 +11,7 @@ import { Route, Routes  } from "react-router-dom";
 import ProtectedRoute from "./helpers/ProtectedRoute";
 import Login from "./components/Login/Login";
 import AuthProvider from "./helpers/AuthProvider";
+import TransactionDetails from "./components/TransactionDetails/TransactionDetails";
 
 function App() {
   registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWXxcdXVUR2BfWUxyWEM=');
@@ -19,6 +20,7 @@ function App() {
     <AuthProvider>
     <Routes>
         <Route path="/" element={ <ProtectedRoute><Home/></ProtectedRoute> } />
+        <Route path="transaction-records" element={ <ProtectedRoute><TransactionDetails/></ProtectedRoute> } />
         <Route path="login" element={ <Login /> } />
       </Routes>
       </AuthProvider>
