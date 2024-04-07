@@ -4,6 +4,8 @@ import MainNavbar from '../MainNavbar/MainNavbar';
 import { Card, Box } from "@mui/material";
 import { GridComponent, ColumnsDirective, ColumnDirective,Sort,Inject,Edit,CommandColumn,Toolbar } from "@syncfusion/ej2-react-grids";
 import { db } from "../../database-config";
+import CIcon from '@coreui/icons-react';
+import { cilArrowThickLeft,cilArrowLeft} from '@coreui/icons';
 import {
     collection,
     getDoc,
@@ -150,7 +152,8 @@ const TransactionDetails = () => {
         <div>
             <MainNavbar/>            
             <Box sx={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
-                <button  style={{ margin: 2, padding: 2, textAlign: 'left', boxShadow: 4, bgcolor: 'grey.200' }} onClick={() => navigate("/transaction")}>Go Back</button>
+                <CIcon icon={cilArrowThickLeft} style={{ margin: 2, padding: 2, textAlign: 'left', boxShadow: 4, bgcolor: 'grey.200' }} onClick={() => navigate("/transaction")}/>
+                {/* <button  style={{ margin: 2, padding: 2, textAlign: 'left', boxShadow: 4, bgcolor: 'grey.200' }} onClick={() => navigate("/transaction")}>Go Back</button> */}
                 <Card sx={{ width: 350, margin: 2, padding: 2, textAlign: 'left', boxShadow: 4, bgcolor: 'grey.200' }}>
                     <div>
                         <b>नाव</b> : {`${userData.last_name} ${userData.first_name} ${userData.middle_name ? userData.middle_name + ' ' : ''}`}
@@ -187,8 +190,8 @@ const TransactionDetails = () => {
                     <ColumnDirective field='S/r' headerText='क्रमांक' width='150' textAlign='Center' isPrimaryKey ={true} />
                     <ColumnDirective field='Remark' headerText='तपशील' width='200' />
                     <ColumnDirective field='Date' headerText='दिनांक' width='150' format='dd/MM/yyyy' type="date" editType="datepickeredit"/>
-                    <ColumnDirective field='Debited' headerText='नावे' width='150' template={debitedTemplate} allowEditing={props => props.Debited >= 0}/>
-                    <ColumnDirective field='Credited' headerText='जमा' width='120' format='0.00' template={creditedTemplate} allowEditing={props => props.Credited >= 0}/>
+                    <ColumnDirective field='Debited' headerText='नावे' width='150' template={debitedTemplate} allowEditing={props => props.Debited}/>
+                    <ColumnDirective field='Credited' headerText='जमा' width='120' format='0.00' template={creditedTemplate} allowEditing={props => props.Credited}/>
                 </ColumnsDirective>
 
                 <Inject services={[Sort, Edit, CommandColumn, Toolbar]}></Inject>
