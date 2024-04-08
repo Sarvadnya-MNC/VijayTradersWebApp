@@ -80,17 +80,21 @@ const Transaction = () => {
       };
       let grid ;
     const toolbarClick = (args) =>{
-        console.log('for Refresh',args);
+
         if (grid && args.item.id === 'Grid_pdfexport') {
             grid.pdfExport();
           }
         if (grid && args.item.id === 'Grid_Refresh') {
-            console.log('In Refresh',args);
             getAllTransactionsData();             
         }
         if (grid && args.item.id === 'Grid_excelexport') {
-            const selectedRecords = grid.getSelectedRecords();
-            grid.excelExport();
+            const currentDate = new Date();
+            const day = currentDate.getDate().toString().padStart(2, '0'); 
+            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); 
+            const year = currentDate.getFullYear().toString();
+            grid.excelExport({
+                fileName:`Unsettled_Transaction_${year}-${month}-${day}.xlsx`
+            });
         }
          
     }
