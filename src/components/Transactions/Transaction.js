@@ -41,7 +41,7 @@ const Transaction = () => {
                 return null;
               }
 
-            if(user.validToExport){
+            
                 const fullName = `${user.last_name} ${user.first_name} ${user.middle_name ? user.middle_name + ' ' : ''}`;
             const currentIndex = validIndex++;
             return {
@@ -54,10 +54,7 @@ const Transaction = () => {
                 'user_id': user.user_id,
                 'Address' : user.address,
                 'email' : user.email,
-            };
-            }  else{
-                return null;
-            }       
+            };      
             
         }).filter(record => record !== null);
 
@@ -83,20 +80,17 @@ const Transaction = () => {
       };
       let grid ;
     const toolbarClick = (args) =>{
+        console.log('for Refresh',args);
         if (grid && args.item.id === 'Grid_pdfexport') {
             grid.pdfExport();
           }
-        if (grid && args.item.id === 'Grid_refresh') {
-            getAllTransactionsData(); 
-            console.log('In Refresh');
+        if (grid && args.item.id === 'Grid_Refresh') {
+            console.log('In Refresh',args);
+            getAllTransactionsData();             
         }
         if (grid && args.item.id === 'Grid_excelexport') {
             const selectedRecords = grid.getSelectedRecords();
-            const exportProperties = {
-                dataSource: selectedRecords
-            };
-            console.log('In Excel', exportProperties);
-            grid.excelExport(exportProperties);
+            grid.excelExport();
         }
          
     }
@@ -115,11 +109,12 @@ const Transaction = () => {
                 allowPaging={true}
                 pageSettings={{ pageSize: 15 }}
                 allowPdfExport = {true}
+                allowExcelExport={true}
                 toolbar={['PdfExport', 'Refresh','ExcelExport']}
                 toolbarClick = {toolbarClick}
                 >
                 <ColumnsDirective>
-                    <ColumnDirective field='S/R No' headerText='क्रमांक' width='150' textAlign='Center'/>
+                    <ColumnDirective field='S/R No' headerText='क्रमांक' width='150' textAlign='Center' isPrimaryKey={true}/>
                     <ColumnDirective field='Name' headerText='नाव' width='200' />
                     <ColumnDirective field='Mobile' headerText='मोबाइल' width='150' />
                     <ColumnDirective field='Date' headerText='दिनांक' width='150' format='dd/MM/yyyy' type="date" />
