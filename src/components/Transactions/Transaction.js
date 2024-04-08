@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Sort, Filter, Toolbar, Inject, PdfExport } from "@syncfusion/ej2-react-grids";
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Sort, Filter, Toolbar, Inject, PdfExport, ExcelExport } from "@syncfusion/ej2-react-grids";
 import { IconButton } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import './Transaction.css';
@@ -41,8 +41,8 @@ const Transaction = () => {
                 return null;
               }
 
-
-            const fullName = `${user.last_name} ${user.first_name} ${user.middle_name ? user.middle_name + ' ' : ''}`;
+            if(user.validToExport){
+                const fullName = `${user.last_name} ${user.first_name} ${user.middle_name ? user.middle_name + ' ' : ''}`;
             const currentIndex = validIndex++;
             return {
                 'S/R No': currentIndex + 1,
@@ -50,11 +50,14 @@ const Transaction = () => {
                 'Mobile': user.mobile,
                 'Date': new Timestamp(user.updated_date.seconds, user.updated_date.nanoseconds).toDate(),
                 'Amount': Math.abs(user.closing_balance),
-                'TransactionType': user.closing_balance > 0 ? "CREDITE/जमा" : "DEBITE/नावे",
+                'TransactionType': user.closing_balance > 0 ? "CREDITE" : "DEBITE",
                 'user_id': user.user_id,
                 'Address' : user.address,
                 'email' : user.email,
-            };            
+            };
+            }  else{
+                return null;
+            }       
             
         }).filter(record => record !== null);
 
@@ -83,13 +86,22 @@ const Transaction = () => {
         if (grid && args.item.id === 'Grid_pdfexport') {
             grid.pdfExport();
           }
-          console.log('In Refresh');
-          if (grid && args.item.id === 'Grid_refresh') { // Check if the clicked item is the Refresh button
-            getAllTransactionsData(); // Call your method to fetch data
+        if (grid && args.item.id === 'Grid_refresh') {
+            getAllTransactionsData(); 
             console.log('In Refresh');
+        }
+        if (grid && args.item.id === 'Grid_excelexport') {
+            const selectedRecords = grid.getSelectedRecords();
+            const exportProperties = {
+                dataSource: selectedRecords
+            };
+            console.log('In Excel', exportProperties);
+            grid.excelExport(exportProperties);
         }
          
     }
+
+    const selectionOptions = { type: 'Multiple', enableSimpleMultiRowSelection: true };
     
     return (
         <div >
@@ -97,12 +109,13 @@ const Transaction = () => {
                 id='Grid'
                 ref = {g => grid = g}
                 allowFiltering={true}
+                selectionSettings={selectionOptions}
                 filterSettings={{ ignoreAccent: true, type: 'Excel' }}
                 allowSorting={true}
                 allowPaging={true}
                 pageSettings={{ pageSize: 15 }}
                 allowPdfExport = {true}
-                toolbar={['PdfExport', 'Refresh']}
+                toolbar={['PdfExport', 'Refresh','ExcelExport']}
                 toolbarClick = {toolbarClick}
                 >
                 <ColumnsDirective>
@@ -114,7 +127,7 @@ const Transaction = () => {
                     <ColumnDirective field='TransactionType' headerText='व्यवहाराचा प्रकार' width='180' />
                     <ColumnDirective headerText='' width='50' template={(props) => actionTemplate(props)} />
                 </ColumnsDirective>
-                <Inject services={[Filter,Sort,Page,Toolbar,PdfExport]}></Inject>
+                <Inject services={[Filter,Sort,Page,Toolbar,PdfExport,ExcelExport]}></Inject>
 
             </GridComponent>   
         </div>
