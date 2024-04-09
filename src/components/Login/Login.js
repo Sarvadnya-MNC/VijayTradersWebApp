@@ -57,13 +57,13 @@ const Login = (props) =>{
             // Signed in
             const user = userCredential.user;
             navigate("/")
-            console.log(user);
+            // console.log(user);
         })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(errorCode, errorMessage)
-            console.log('error',error)
+            // console.log(errorCode, errorMessage)
+            // console.log('error',error)
             setError('Invalid credentials')
         });
   
@@ -85,7 +85,7 @@ const Login = (props) =>{
                 await onFormSubmit();
               })
               .catch((err) => {
-                console.log('out err',err)
+                // console.log('out err',err)
                 // set the error state
                 setError(err?.errors[0]);
               });
