@@ -25,7 +25,7 @@ const TransactionDetails = () => {
     const [totalCredited, setTotalCredited] = useState(0);
     const location = useLocation();
     const navigate = useNavigate();
-    console.log('Location state', location);
+    //console.log('Location state', location);
     const userId = location?.state?.userID;
     
 
@@ -77,12 +77,12 @@ const TransactionDetails = () => {
     }    
 
     const debitedTemplate = (props) => {
-        console.log( 'props.Debited value=  ',props.Debited);
+        //console.log( 'props.Debited value=  ',props.Debited);
         return <div style={{ color: props.Debited > 0 ? 'red' : 'inherit' }}>{props.Debited}</div>;
     };
 
     const creditedTemplate = (props) => {
-        console.log( 'props.credit value=  ',props.Credited);
+        //console.log( 'props.credit value=  ',props.Credited);
         return <div style={{ color: props.Credited > 0 ? 'green' : 'inherit' }}>{props.Credited}</div>;
     };
 
@@ -104,7 +104,7 @@ const TransactionDetails = () => {
     const handleActionBegin = async (args) => {
         // console.log('In delete outside',args);
         if (args.requestType === 'delete') {
-            console.log('In delete inside');
+           // console.log('In delete inside');
             if(args.data[0].Remark !== 'Total'){
                 await deleteDocumentFromFirebase(args.data[0].id,args.data[0].userId);
             }            
@@ -112,9 +112,9 @@ const TransactionDetails = () => {
     };
     
     const updateDocumentInFirebase = async (updatedData) => {
-        console.log('In updateDocumentInFirebase',updatedData);
+       // console.log('In updateDocumentInFirebase',updatedData);
         if(updatedData.Remark !== 'Total'){   
-            console.log('In updateDocumentInFirebase -----');         
+           // console.log('In updateDocumentInFirebase -----');         
             const docRef = doc(db, "vijay_transaction", updatedData.id);
         let data = {
             amount : updatedData.Debited > 0 ? updatedData.Debited: updatedData.Credited,
@@ -122,11 +122,11 @@ const TransactionDetails = () => {
             remark :  updatedData.Remark           
         };
         await updateDoc(docRef, data);
-        console.log('After update doc');
+        //console.log('After update doc');
         let amount = updatedData.Debited > 0 ?  parseFloat(updatedData.Debited) : parseFloat(updatedData.Credited);
-        console.log('amount',amount);
+        //console.log('amount',amount);
         let Isdebited = updatedData.Debited > 0 ? true: false;
-        console.log('updatedData',updatedData);
+       // console.log('updatedData',updatedData);
         const docRef1 = doc(db, "vijay_user", userId);
         await updateClosingBalance(docRef1);
         }
@@ -140,7 +140,7 @@ const TransactionDetails = () => {
 
     const toolbarClick = (args) =>{
         if (args.item.id === 'Grid_Refresh') {
-            console.log('In refresh -> in if');
+           // console.log('In refresh -> in if');
             getDocument();           
         }        
     }
@@ -160,7 +160,7 @@ const TransactionDetails = () => {
         let totalCredit = transactions.reduce((acc, curr) => acc + parseFloat(curr.Credited || 0), 0);
 
         let updatedCLosingbalance = totalCredit - totalDebit;
-        console.log('updatedCLosingbalance',updatedCLosingbalance);
+        //console.log('updatedCLosingbalance',updatedCLosingbalance);
         let userData = {
             closing_balance : updatedCLosingbalance,
         };
