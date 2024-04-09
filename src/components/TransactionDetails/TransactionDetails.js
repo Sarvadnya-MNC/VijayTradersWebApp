@@ -87,22 +87,22 @@ const TransactionDetails = () => {
     };
 
     const queryCellInfoHandler = (args) => {
-        console.log('in query',args);
+        // console.log('in query',args);
         if (args.data['S/r'] === '') {
             args.cell.classList.add('make-bold');
         }
     };
 
     const handleActionComplete = async (args) => {
-        console.log('In update outside', args);
+        // console.log('In update outside', args);
         if (args.requestType === 'save') {
-            console.log('In update inside');
+            // console.log('In update inside');
             await updateDocumentInFirebase(args.data);
         }
     };
     
     const handleActionBegin = async (args) => {
-        console.log('In delete outside',args);
+        // console.log('In delete outside',args);
         if (args.requestType === 'delete') {
             console.log('In delete inside');
             if(args.data[0].Remark !== 'Total'){

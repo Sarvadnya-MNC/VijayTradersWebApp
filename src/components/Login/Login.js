@@ -20,6 +20,7 @@ import {  signInWithEmailAndPassword  } from 'firebase/auth';
 import { auth } from "../../database-config";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
+import logo from '../../assets/images/logo.png'
 
 const Login = (props) =>{
     const [userDetailsForm, setUserDetailsForm] = useState({
@@ -56,13 +57,13 @@ const Login = (props) =>{
             // Signed in
             const user = userCredential.user;
             navigate("/")
-            console.log(user);
+            // console.log(user);
         })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(errorCode, errorMessage)
-            console.log('error',error)
+            // console.log(errorCode, errorMessage)
+            // console.log('error',error)
             setError('Invalid credentials')
         });
   
@@ -84,7 +85,7 @@ const Login = (props) =>{
                 await onFormSubmit();
               })
               .catch((err) => {
-                console.log('out err',err)
+                // console.log('out err',err)
                 // set the error state
                 setError(err?.errors[0]);
               });
@@ -92,12 +93,11 @@ const Login = (props) =>{
         }}
       >
         <DialogTitle fontWeight={700}>
-            <span className="center-align">Vijay Traders</span></DialogTitle>
+          <div className="center-align">
+            <img src={logo} height={80} alt="vijay traders"/>
+          </div>
+            </DialogTitle>
         <DialogContent>
-          {/* <DialogContentText>
-            Add the user details here so that you can track it later We will send
-            updates occasionally.
-          </DialogContentText> */}
           <div className="center-align" style={{ margin: "8px" }}>
             <table>
               {error && (

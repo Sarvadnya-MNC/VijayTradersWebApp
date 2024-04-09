@@ -8,7 +8,7 @@ function ProtectedRoute({ children }) {
   const { user } = useContext(AuthContext);
 
   if (user) {
-    console.log('child',children)
+    // console.log('child',children)
     return children;
   }
 

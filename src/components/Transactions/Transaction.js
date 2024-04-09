@@ -62,8 +62,8 @@ const Transaction = () => {
     }
 
     const handleClick = (values) => {
-        console.log('in props.user_id', values.user_id);
-        console.log('Row data:', values);
+        // console.log('in props.user_id', values.user_id);
+        // console.log('Row data:', values);
         setSelectedTransaction(values.user_id);
         navigate("/transaction-records", {state: {userID:values.user_id}} );
     };
