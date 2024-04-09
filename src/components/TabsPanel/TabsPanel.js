@@ -10,12 +10,21 @@ import TabPanel from "@mui/lab/TabPanel";
 import TabList from "@mui/lab/TabList";
 import Dashboard from "../Dashboard/Dashboard";
 import Transaction from "../Transactions/Transaction";
+import { useParams } from "react-router-dom";
 const CentralTabsPanel = () => {
   const [value, setValue] = React.useState("0");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const params = useParams();
+
+  React.useEffect(() => {
+    if (params?.tabId) {
+      setValue(params?.tabId.toString());
+    }
+  }, []);
 
   return (
     <Box sx={{ width: "100%", p: "8px" }}>

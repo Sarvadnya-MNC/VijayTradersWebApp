@@ -19,7 +19,7 @@ function App() {
     <>
     <AuthProvider>
     <Routes>
-        <Route path="/" element={ <ProtectedRoute><Home/></ProtectedRoute> } />
+        <Route path="/:tabId?" element={ <ProtectedRoute><Home/></ProtectedRoute> } />
         <Route path="transaction-records" element={ <ProtectedRoute><TransactionDetails/></ProtectedRoute> } />
         <Route path = "transaction" element = {<ProtectedRoute><Transaction/></ProtectedRoute>}/>
         <Route path="login" element={ <Login /> } />
