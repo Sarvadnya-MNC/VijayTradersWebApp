@@ -100,8 +100,12 @@ const Dashboard = () => {
 
         return resMap;
       }, {});
-    // set the graph data
-    setDatasets(Object.values(dateMap).sort((a1, a2) => a1.date - a2.date));
+    // set the graph data for only last 30 days
+    setDatasets(
+      Object.values(dateMap)
+        .sort((a1, a2) => a1.date - a2.date)
+        .slice(-30)
+    );
   };
 
   const setAmountsData = (usersArray) => {
@@ -356,6 +360,14 @@ const Dashboard = () => {
                     ]}
                     {...chartSetting}
                   />
+                )}
+                {!datasets?.length && (
+                  <div
+                    className="center-align"
+                    style={{ alignItems: "center", height: "100%" }}
+                  >
+                    No Data Available
+                  </div>
                 )}
                 {/* </CardContent> */}
               </Card>
