@@ -68,7 +68,6 @@ const MainNavbar = () => {
                 variant="h6"
                 noWrap
                 component="a"
-                href="#app-bar-with-responsive-menu"
                 sx={{
                   mr: 2,
                   display: { xs: "none", md: "flex" },
@@ -94,7 +93,6 @@ const MainNavbar = () => {
                 variant="h5"
                 noWrap
                 component="a"
-                href="#app-bar-with-responsive-menu"
                 sx={{
                   mr: 2,
                   display: { xs: "flex", md: "none" },
