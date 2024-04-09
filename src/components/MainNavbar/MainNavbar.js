@@ -16,6 +16,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Stack from "@mui/material/Stack";
 import { AuthContext } from "../../helpers/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/images/logo.png";
 
 const MainNavbar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -57,12 +58,11 @@ const MainNavbar = () => {
         >
           <Stack spacing={2} direction={"row"}>
             <div style={{ display: "flex", alignItems: "center" }}>
-              <AdbIcon
-                sx={{
-                  display: { xs: "none", md: "flex" },
-                  mr: 1,
-                  alignItems: "center",
-                }}
+              <img
+                src={logo}
+                width={50}
+                style={{ marginRight: "8px" }}
+                alt="vijay traders"
               />
               <Typography
                 variant="h6"
