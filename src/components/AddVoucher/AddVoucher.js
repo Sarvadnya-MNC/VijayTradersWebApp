@@ -85,7 +85,6 @@ function AddVoucher(props) {
       transaction_type: voucherForm.transaction_type?.value,
       user_id: voucherForm.user_id?.value,
     };
-    window.alert(JSON.stringify(dataToPut));
     // create the record
     const docRef = await addDoc(collection(db, "vijay_transaction"), dataToPut);
     // update the record with unique id

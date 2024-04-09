@@ -114,11 +114,11 @@ const Dashboard = () => {
       credit: usersArray
         .filter((si) => Number(si.closing_balance) >= 0)
         .map((a) => a.closing_balance)
-        .reduce((currSum, ele) => Number(currSum) + Number(ele)),
+        ?.reduce((currSum, ele) => Number(currSum) + Number(ele), 0),
       debit: usersArray
         .filter((si) => Number(si.closing_balance) < 0)
         .map((a) => Math.abs(Number(a.closing_balance)))
-        .reduce((currSum, ele) => currSum + ele),
+        ?.reduce((currSum, ele) => currSum + ele, 0),
     });
   };
 
