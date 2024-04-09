@@ -4,8 +4,7 @@ import MainNavbar from '../MainNavbar/MainNavbar';
 import { Card, Box } from "@mui/material";
 import { GridComponent, ColumnsDirective, ColumnDirective,Sort,Inject,Edit,CommandColumn,Toolbar } from "@syncfusion/ej2-react-grids";
 import { db } from "../../database-config";
-import CIcon from '@coreui/icons-react';
-import { cilArrowThickLeft,cilArrowLeft} from '@coreui/icons';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import {
     collection,
     getDoc,
@@ -107,53 +106,74 @@ const TransactionDetails = () => {
         if (args.requestType === 'delete') {
             console.log('In delete inside');
             if(args.data[0].Remark !== 'Total'){
-                await deleteDocumentFromFirebase(args.data[0].id,args.data[0].userId,args.data[0].Debited,args.data[0].Credited,args.data[0].transactionType);
+                await deleteDocumentFromFirebase(args.data[0].id,args.data[0].userId);
             }            
         }
     };
     
     const updateDocumentInFirebase = async (updatedData) => {
-        if(updatedData.Remark !== 'Total'){
-            console.log('In updateDocumentInFirebase');
+        console.log('In updateDocumentInFirebase',updatedData);
+        if(updatedData.Remark !== 'Total'){   
+            console.log('In updateDocumentInFirebase -----');         
             const docRef = doc(db, "vijay_transaction", updatedData.id);
         let data = {
-            amount : updatedData.Debited >= 0 ? updatedData.Debited: updatedData.Credited,
+            amount : updatedData.Debited > 0 ? updatedData.Debited: updatedData.Credited,
             date :updatedData.Date ,
             remark :  updatedData.Remark           
         };
         await updateDoc(docRef, data);
+        console.log('After update doc');
+        let amount = updatedData.Debited > 0 ?  parseFloat(updatedData.Debited) : parseFloat(updatedData.Credited);
+        console.log('amount',amount);
+        let Isdebited = updatedData.Debited > 0 ? true: false;
+        console.log('updatedData',updatedData);
+        const docRef1 = doc(db, "vijay_user", userId);
+        await updateClosingBalance(docRef1);
         }
     };
     
-    const deleteDocumentFromFirebase = async (documentId, userId, debited, credited, transactionType) => {
+    const deleteDocumentFromFirebase = async (documentId, userId) => {
         const docRef = doc(db, "vijay_user", userId);
-        const docSnap = await getDoc(docRef);
-        console.log("docSnap in delete",docSnap);
-        let amount  = debited >= 0 ? debited : credited;
-        let closingBalance = 0;
-
-        if(transactionType === 'CREDITE/जमा'){
-            closingBalance = docSnap.data().closing_balance - amount;
-        }
-
-        if (transactionType === 'DEBITE/नावे'){
-            closingBalance = docSnap.data().closing_balance + amount;
-        }
-
-        let data = {
-            closing_balance : closingBalance
-        };
-        await updateDoc(docRef, data);
         await deleteDoc(doc(db, "vijay_transaction", documentId));
+        await updateClosingBalance(docRef);
     };
 
+    const toolbarClick = (args) =>{
+        if (args.item.id === 'Grid_Refresh') {
+            console.log('In refresh -> in if');
+            getDocument();           
+        }        
+    }
+
+    const updateClosingBalance = async (docRef) => {
+        const docSnap = await getDoc(docRef);
+        const q = query(collection(db, "vijay_transaction"), where("user_id", "==", docSnap.data().user_id));
+        const querySnapshot = await getDocs(q);
+        const transactions = querySnapshot.docs.map((doc) => {
+            return {
+                'Debited': doc.data().transaction_type === 'DEBITE/नावे' ? doc.data().amount : '',
+                'Credited': doc.data().transaction_type === 'CREDITE/जमा' ? doc.data().amount : '',
+            };
+        });
+
+        let totalDebit = transactions.reduce((acc, curr) => acc + parseFloat(curr.Debited || 0), 0);
+        let totalCredit = transactions.reduce((acc, curr) => acc + parseFloat(curr.Credited || 0), 0);
+
+        let updatedCLosingbalance = totalCredit - totalDebit;
+        console.log('updatedCLosingbalance',updatedCLosingbalance);
+        let userData = {
+            closing_balance : updatedCLosingbalance,
+        };
+        await updateDoc(docRef, userData);
+    }
 
     return (
         <div>
             <MainNavbar/>            
             <Box sx={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
-                <CIcon icon={cilArrowThickLeft} style={{ margin: 2, padding: 2, textAlign: 'left', boxShadow: 4, bgcolor: 'grey.200' }} onClick={() => navigate("/transaction")}/>
-                {/* <button  style={{ margin: 2, padding: 2, textAlign: 'left', boxShadow: 4, bgcolor: 'grey.200' }} onClick={() => navigate("/transaction")}>Go Back</button> */}
+               <div style= {{display:'flex', alignContent: 'center',  margin: '8px', flexWrap:'wrap' , cursor:'pointer'}}>
+               <KeyboardBackspaceIcon  style={{ margin: 2, padding: 2, textAlign: 'left', boxShadow: 4, bgcolor: 'grey.200' }} onClick={() => navigate("/transaction")}/>
+               </div>
                 <Card sx={{ width: 350, margin: 2, padding: 2, textAlign: 'left', boxShadow: 4, bgcolor: 'grey.200' }}>
                     <div>
                         <b>नाव</b> : {`${userData.last_name} ${userData.first_name} ${userData.middle_name ? userData.middle_name + ' ' : ''}`}
@@ -179,12 +199,14 @@ const TransactionDetails = () => {
             <GridComponent dataSource={transaction}
             id='Grid'
             allowSorting={true}
-            toolbar={['Edit', 'Delete', 'Update', 'Cancel']}
+            toolbar={['Edit', 'Delete', 'Update', 'Cancel', 'Refresh']}
             editSettings = { {allowEditing: true, allowDeleting: true }}
             queryCellInfo={queryCellInfoHandler}
             cssClass="custom-grid"
             actionComplete={handleActionComplete}
-            actionBegin={handleActionBegin}>
+            actionBegin={handleActionBegin}
+            toolbarClick = {toolbarClick}
+            >
 
             <ColumnsDirective>
                     <ColumnDirective field='S/r' headerText='क्रमांक' width='150' textAlign='Center' isPrimaryKey ={true} />
