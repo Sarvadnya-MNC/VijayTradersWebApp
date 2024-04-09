@@ -62,8 +62,8 @@ const Transaction = () => {
     }
 
     const handleClick = (values) => {
-        console.log('in props.user_id', values.user_id);
-        console.log('Row data:', values);
+        // console.log('in props.user_id', values.user_id);
+        // console.log('Row data:', values);
         setSelectedTransaction(values.user_id);
         navigate("/transaction-records", {state: {userID:values.user_id}} );
     };
@@ -83,10 +83,10 @@ const Transaction = () => {
         if (grid && args.item.id === 'Grid_pdfexport') {
             grid.pdfExport();
           }
-          console.log('In Refresh');
+        //   console.log('In Refresh');
           if (grid && args.item.id === 'Grid_refresh') { // Check if the clicked item is the Refresh button
             getAllTransactionsData(); // Call your method to fetch data
-            console.log('In Refresh');
+            // console.log('In Refresh');
         }
          
     }

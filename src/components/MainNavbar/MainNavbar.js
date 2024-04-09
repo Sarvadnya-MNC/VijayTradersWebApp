@@ -38,7 +38,7 @@ const MainNavbar = () => {
   const handleCloseUserMenu = () => {
     logOut()
       .then(() => {
-        console.log("User logged out successfully");
+        // console.log("User logged out successfully");
         navigate("/login"); // Redirect to the login page after logout
       })
       .catch((error) => console.error(error));

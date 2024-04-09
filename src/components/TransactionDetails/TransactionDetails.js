@@ -21,7 +21,7 @@ const TransactionDetails = () => {
     const [userData, setUserData] = useState({});
     const [transaction, setTransaction] = useState([]);
     const location = useLocation();
-    console.log('Location state', location);
+    // console.log('Location state', location);
     const userId = location?.state?.userID;
     var allowCreditEdit = false;
     var allowDebitEdit = false;
@@ -71,37 +71,37 @@ const TransactionDetails = () => {
 
     const debitedTemplate = (props) => {
         allowDebitEdit = props.Debited > 0 ? true : false;
-        console.log( 'props.Debited allowDebitEdit=  ',allowDebitEdit);
-        console.log( 'props.Debited value=  ',props.Debited);
+        // console.log( 'props.Debited allowDebitEdit=  ',allowDebitEdit);
+        // console.log( 'props.Debited value=  ',props.Debited);
         return <div style={{ color: props.Debited > 0 ? 'red' : 'inherit' }}>{props.Debited}</div>;
     };
 
     const creditedTemplate = (props) => {
         allowCreditEdit = props.Credited > 0 ? true : false;
-        console.log( 'props.Credit allowDebitEdit=  ',allowCreditEdit);
-        console.log( 'props.credit value=  ',props.Credited);
+        // console.log( 'props.Credit allowDebitEdit=  ',allowCreditEdit);
+        // console.log( 'props.credit value=  ',props.Credited);
         return <div style={{ color: props.Credited > 0 ? 'green' : 'inherit' }}>{props.Credited}</div>;
     };
 
     const queryCellInfoHandler = (args) => {
-        console.log('in query',args);
+        // console.log('in query',args);
         if (args.data['S/r'] === '') {
             args.cell.classList.add('make-bold');
         }
     };
 
     const handleActionComplete = async (args) => {
-        console.log('In update outside', args);
+        // console.log('In update outside', args);
         if (args.requestType === 'save') {
-            console.log('In update inside');
+            // console.log('In update inside');
             await updateDocumentInFirebase(args.data);
         }
     };
     
     const handleActionBegin = async (args) => {
-        console.log('In delete outside',args);
+        // console.log('In delete outside',args);
         if (args.requestType === 'delete') {
-            console.log('In delete inside');
+            // console.log('In delete inside');
             await deleteDocumentFromFirebase(args.data[0].id);
         }
     };
