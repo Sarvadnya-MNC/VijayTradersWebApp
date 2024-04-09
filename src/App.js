@@ -21,6 +21,7 @@ function App() {
     <Routes>
         <Route path="/" element={ <ProtectedRoute><Home/></ProtectedRoute> } />
         <Route path="transaction-records" element={ <ProtectedRoute><TransactionDetails/></ProtectedRoute> } />
+        <Route path = "transaction" element = {<ProtectedRoute><Transaction/></ProtectedRoute>}/>
         <Route path="login" element={ <Login /> } />
       </Routes>
       </AuthProvider>

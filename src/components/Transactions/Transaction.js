@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Sort, Filter, Toolbar, Inject, PdfExport } from "@syncfusion/ej2-react-grids";
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Sort, Filter, Toolbar, Inject, PdfExport, ExcelExport } from "@syncfusion/ej2-react-grids";
 import { IconButton } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import './Transaction.css';
@@ -41,8 +41,8 @@ const Transaction = () => {
                 return null;
               }
 
-
-            const fullName = `${user.last_name} ${user.first_name} ${user.middle_name ? user.middle_name + ' ' : ''}`;
+            
+                const fullName = `${user.last_name} ${user.first_name} ${user.middle_name ? user.middle_name + ' ' : ''}`;
             const currentIndex = validIndex++;
             return {
                 'S/R No': currentIndex + 1,
@@ -50,11 +50,11 @@ const Transaction = () => {
                 'Mobile': user.mobile,
                 'Date': new Timestamp(user.updated_date.seconds, user.updated_date.nanoseconds).toDate(),
                 'Amount': Math.abs(user.closing_balance),
-                'TransactionType': user.closing_balance > 0 ? "CREDITE/जमा" : "DEBITE/नावे",
+                'TransactionType': user.closing_balance > 0 ? "CREDITE" : "DEBITE",
                 'user_id': user.user_id,
                 'Address' : user.address,
                 'email' : user.email,
-            };            
+            };      
             
         }).filter(record => record !== null);
 
@@ -80,16 +80,26 @@ const Transaction = () => {
       };
       let grid ;
     const toolbarClick = (args) =>{
+
         if (grid && args.item.id === 'Grid_pdfexport') {
             grid.pdfExport();
           }
-        //   console.log('In Refresh');
-          if (grid && args.item.id === 'Grid_refresh') { // Check if the clicked item is the Refresh button
-            getAllTransactionsData(); // Call your method to fetch data
-            // console.log('In Refresh');
+        if (grid && args.item.id === 'Grid_Refresh') {
+            getAllTransactionsData();             
+        }
+        if (grid && args.item.id === 'Grid_excelexport') {
+            const currentDate = new Date();
+            const day = currentDate.getDate().toString().padStart(2, '0'); 
+            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); 
+            const year = currentDate.getFullYear().toString();
+            grid.excelExport({
+                fileName:`Unsettled_Transaction_${year}-${month}-${day}.xlsx`
+            });
         }
          
     }
+
+    const selectionOptions = { type: 'Multiple', enableSimpleMultiRowSelection: true };
     
     return (
         <div >
@@ -97,16 +107,18 @@ const Transaction = () => {
                 id='Grid'
                 ref = {g => grid = g}
                 allowFiltering={true}
+                selectionSettings={selectionOptions}
                 filterSettings={{ ignoreAccent: true, type: 'Excel' }}
                 allowSorting={true}
                 allowPaging={true}
                 pageSettings={{ pageSize: 15 }}
                 allowPdfExport = {true}
-                toolbar={['PdfExport', 'Refresh']}
+                allowExcelExport={true}
+                toolbar={['PdfExport', 'Refresh','ExcelExport']}
                 toolbarClick = {toolbarClick}
                 >
                 <ColumnsDirective>
-                    <ColumnDirective field='S/R No' headerText='क्रमांक' width='150' textAlign='Center'/>
+                    <ColumnDirective field='S/R No' headerText='क्रमांक' width='150' textAlign='Center' isPrimaryKey={true}/>
                     <ColumnDirective field='Name' headerText='नाव' width='200' />
                     <ColumnDirective field='Mobile' headerText='मोबाइल' width='150' />
                     <ColumnDirective field='Date' headerText='दिनांक' width='150' format='dd/MM/yyyy' type="date" />
@@ -114,7 +126,7 @@ const Transaction = () => {
                     <ColumnDirective field='TransactionType' headerText='व्यवहाराचा प्रकार' width='180' />
                     <ColumnDirective headerText='' width='50' template={(props) => actionTemplate(props)} />
                 </ColumnsDirective>
-                <Inject services={[Filter,Sort,Page,Toolbar,PdfExport]}></Inject>
+                <Inject services={[Filter,Sort,Page,Toolbar,PdfExport,ExcelExport]}></Inject>
 
             </GridComponent>   
         </div>

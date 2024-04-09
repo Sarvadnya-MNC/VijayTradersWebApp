@@ -25,3 +25,17 @@
     border-right: 1px solid #ccc;
 }
 
+.grid-container {
+    display: flex;
+    /* grid-template-columns: repeat(5, 1fr);  */
+    justify-content: flex-end;
+    /* Optional: add additional styling */
+}
+
+.grid-item {
+    /* Optional: add styling for grid items */
+    text-align: center;
+    padding: 10px;
+}
+
+
